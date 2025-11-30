@@ -4,6 +4,8 @@ import Home from './components/Home';
 import DecisionTree from './components/DecisionTree';
 import ChatBot from './components/ChatBot';
 import Planner from './components/Planner';
+import Login from './components/Login';
+import { useAuth } from './contexts/AuthContext';
 
 // Helper to get a clean, normalized path from the window hash
 const getNormalizedPath = () => {
@@ -19,6 +21,7 @@ const getNormalizedPath = () => {
 
 function App() {
   const [currentPath, setCurrentPath] = useState(getNormalizedPath());
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -26,10 +29,10 @@ function App() {
       setCurrentPath(path);
       window.scrollTo(0, 0);
     };
-    
+
     // Listen for hash changes
     window.addEventListener('hashchange', handleHashChange);
-    
+
     // Initial check
     handleHashChange();
 
@@ -39,13 +42,16 @@ function App() {
   let component;
   switch (currentPath) {
     case '/solve':
-      component = <DecisionTree />;
+      component = currentUser ? <DecisionTree /> : <Login />;
       break;
     case '/chat':
-      component = <ChatBot />;
+      component = currentUser ? <ChatBot /> : <Login />;
       break;
     case '/plan':
-      component = <Planner />;
+      component = currentUser ? <Planner /> : <Login />;
+      break;
+    case '/login':
+      component = <Login />;
       break;
     case '/':
     default:
