@@ -62,7 +62,7 @@ Follow these steps to get SolveTree running locally.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/solvetree.git
+   git clone https://github.com/ReachOutToHardik/solvetree.git
    cd solvetree
    ```
 
