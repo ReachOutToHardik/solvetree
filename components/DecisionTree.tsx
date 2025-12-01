@@ -33,6 +33,36 @@ const DecisionTree: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<DecisionStep | null>(null);
   const [history, setHistory] = useState<{question: string, answer: string}[]>([]);
 
+  // Placeholder Animation
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  
+  const visualExamples = [
+    "Should I move cities for a relationship?",
+    "Is it time to leave my job or am I just burnt out?",
+    "Should I buy a house with my partner before marriage?",
+    "Do I go to grad school or keep working?",
+    "Should I cut off a toxic friend group?"
+  ];
+
+  const interactiveExamples = [
+    "He's 'bad at texting' but always online. Is he interested?",
+    "We've been talking for 3 months but no label. Do I ask?",
+    "Found their Hinge profile but they said they deleted it. Confront them?",
+    "Should I text my ex happy birthday?",
+    "They cancelled twice in a row. Do I give a third chance?"
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholderIndex((prev) => (prev + 1) % 5);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentPlaceholder = mode === 'visual' 
+    ? `e.g., ${visualExamples[placeholderIndex]}`
+    : `e.g., ${interactiveExamples[placeholderIndex]}`;
+
   // VISUAL MODE HANDLER
   const handleVisualSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,11 +180,8 @@ const DecisionTree: React.FC = () => {
                 <textarea
                   id="situation"
                   rows={4}
-                  className="block w-full rounded-xl border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-lg p-4 border bg-slate-50/50"
-                  placeholder={mode === 'visual' 
-                    ? "e.g., Should I accept a job offer with higher pay but longer commute?" 
-                    : "e.g., I'm thinking about breaking up with my partner because..."
-                  }
+                  className="block w-full rounded-xl border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-lg p-4 border bg-slate-50/50 transition-all duration-500"
+                  placeholder={currentPlaceholder}
                   value={situation}
                   onChange={(e) => setSituation(e.target.value)}
                   disabled={loading}

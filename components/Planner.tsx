@@ -1,13 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { generateStrategicPlan } from '../services/gemini';
 import { StrategicPlan, PlannerPhase, PlannerTask } from '../types';
-import { Calendar, CheckSquare, Clock, ArrowRight, Loader2, Map } from 'lucide-react';
+import { Calendar, CheckSquare, Clock, ArrowRight, Loader2, Map, DollarSign, MapPin } from 'lucide-react';
 
 const Planner: React.FC = () => {
   const [goal, setGoal] = useState('');
+  const [category, setCategory] = useState('Other');
   const [plan, setPlan] = useState<StrategicPlan | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Placeholder Animation
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  
+  const planningExamples = [
+    "Plan a 2-week solo trip to Japan on a budget",
+    "Launch a podcast from scratch in 30 days",
+    "Train for a marathon in 6 months with no experience",
+    "Plan a surprise engagement party for 50 guests",
+    "Organize a small business launch for handmade jewelry"
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholderIndex((prev) => (prev + 1) % 5);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Auto-fill from URL
   useEffect(() => {
@@ -31,7 +50,7 @@ const Planner: React.FC = () => {
     setPlan(null);
 
     try {
-      const result = await generateStrategicPlan(goal);
+      const result = await generateStrategicPlan(goal, category);
       setPlan(result);
     } catch (err) {
       console.error(err);
@@ -66,19 +85,32 @@ const Planner: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 mb-16 max-w-3xl mx-auto animate-fade-in-up delay-100">
           <form onSubmit={handleSubmit}>
             <label className="block text-sm font-semibold text-slate-700 mb-3">What is your main objective?</label>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <input
-                type="text"
-                value={goal}
-                onChange={(e) => setGoal(e.target.value)}
-                placeholder="e.g. Launch a SaaS startup, Plan a 2-week trip to Italy..."
-                className="flex-1 rounded-xl border-slate-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 p-4 border text-lg"
-                disabled={loading}
-              />
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full sm:w-1/3 rounded-xl border-slate-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 p-4 border text-lg bg-white cursor-pointer hover:bg-slate-50 transition-colors"
+                >
+                  <option value="Other">✨ Other</option>
+                  <option value="Business Launch">🚀 Business Launch</option>
+                  <option value="Travel Itinerary">✈️ Travel Itinerary</option>
+                  <option value="Learning Path">🎓 Learning Path</option>
+                  <option value="Event Planning">🎉 Event Planning</option>
+                </select>
+                <input
+                  type="text"
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
+                  placeholder={`e.g. ${planningExamples[placeholderIndex]}`}
+                  className="flex-1 rounded-xl border-slate-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 p-4 border text-lg transition-all duration-500"
+                  disabled={loading}
+                />
+              </div>
               <button
                 type="submit"
                 disabled={loading || !goal.trim()}
-                className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl shadow-lg text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 transition-all hover:scale-105"
+                className="w-full inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl shadow-lg text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 transition-all hover:scale-[1.02]"
               >
                 {loading ? <Loader2 className="animate-spin" /> : 'Generate Plan'}
               </button>
@@ -133,7 +165,25 @@ const Planner: React.FC = () => {
                                   {task.priority}
                                 </span>
                               </div>
-                              <p className="text-slate-600 leading-relaxed text-base">{task.description}</p>
+                              <p className="text-slate-600 leading-relaxed text-base mb-3">{task.description}</p>
+                              
+                              {/* Extra Details for Travel/Events */}
+                              {(task.costEstimate || task.location) && (
+                                <div className="flex flex-wrap gap-3 mt-2">
+                                  {task.location && (
+                                    <div className="inline-flex items-center text-xs font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">
+                                      <MapPin size={12} className="mr-1.5" />
+                                      {task.location}
+                                    </div>
+                                  )}
+                                  {task.costEstimate && (
+                                    <div className="inline-flex items-center text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">
+                                      <DollarSign size={12} className="mr-1.5" />
+                                      {task.costEstimate}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           </div>
                         ))}

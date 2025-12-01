@@ -14,6 +14,8 @@ export interface PlannerTask {
   name: string;
   description: string;
   priority: 'High' | 'Medium' | 'Low';
+  costEstimate?: string;
+  location?: string;
 }
 
 export interface StrategicPlan {

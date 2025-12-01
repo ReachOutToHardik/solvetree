@@ -63,11 +63,37 @@ export const createInteractiveSolverSession = () => {
   });
 };
 
-export const generateStrategicPlan = async (goal: string): Promise<StrategicPlan> => {
+export const generateStrategicPlan = async (goal: string, category: string = 'Other'): Promise<StrategicPlan> => {
+  let role = "strategic project manager";
+  let focus = "detailed, launch-ready plan";
+
+  switch (category) {
+    case 'Business Launch':
+      role = "startup consultant";
+      focus = "business launch plan focusing on market research, MVP, marketing, and scaling";
+      break;
+    case 'Travel Itinerary':
+      role = "expert travel agent";
+      focus = "detailed travel itinerary focusing on logistics, sightseeing, and budget";
+      break;
+    case 'Learning Path':
+      role = "curriculum designer";
+      focus = "structured learning path focusing on core concepts, practice, and mastery";
+      break;
+    case 'Event Planning':
+      role = "professional event planner";
+      focus = "event execution plan focusing on logistics, guest experience, and timeline";
+      break;
+    default:
+      role = "strategic project manager";
+      focus = "detailed, launch-ready plan";
+  }
+
   const systemInstruction = `
-    You are a strategic project manager. 
-    Create a detailed, launch-ready plan for the user's goal.
+    You are a ${role}. 
+    Create a ${focus} for the user's goal.
     Break it down into chronological phases.
+    ${category === 'Travel Itinerary' ? 'For travel plans, include specific location names and estimated costs for each activity/task.' : ''}
     Return JSON only.
   `;
 
@@ -95,7 +121,9 @@ export const generateStrategicPlan = async (goal: string): Promise<StrategicPlan
                     properties: {
                       name: { type: Type.STRING },
                       description: { type: Type.STRING },
-                      priority: { type: Type.STRING, enum: ["High", "Medium", "Low"] }
+                      priority: { type: Type.STRING, enum: ["High", "Medium", "Low"] },
+                      costEstimate: { type: Type.STRING },
+                      location: { type: Type.STRING }
                     },
                     required: ["name", "description", "priority"]
                   }
