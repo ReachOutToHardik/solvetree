@@ -182,9 +182,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div>
               <h3 className="text-slate-900 font-bold mb-4">Legal</h3>
               <ul className="space-y-3 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-brand-600 transition-colors cursor-pointer">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-brand-600 transition-colors cursor-pointer">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-brand-600 transition-colors cursor-pointer">Cookie Policy</a></li>
+                <li><a href="#/privacy" onClick={handleNav('/privacy')} className="hover:text-brand-600 transition-colors cursor-pointer">Privacy Policy</a></li>
+                <li><a href="#/terms" onClick={handleNav('/terms')} className="hover:text-brand-600 transition-colors cursor-pointer">Terms of Service</a></li>
+                <li><a href="#/cookies" onClick={handleNav('/cookies')} className="hover:text-brand-600 transition-colors cursor-pointer">Cookie Policy</a></li>
               </ul>
             </div>
           </div>

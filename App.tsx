@@ -5,6 +5,7 @@ import DecisionTree from './components/DecisionTree';
 import ChatBot from './components/ChatBot';
 import Planner from './components/Planner';
 import Login from './components/Login';
+import ErrorPage from './components/ErrorPage';
 import { useAuth } from './contexts/AuthContext';
 
 // Helper to get a clean, normalized path from the window hash
@@ -52,6 +53,11 @@ function App() {
       break;
     case '/login':
       component = <Login />;
+      break;
+    case '/privacy':
+    case '/terms':
+    case '/cookies':
+      component = <ErrorPage />;
       break;
     case '/':
     default:

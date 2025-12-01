@@ -10,10 +10,32 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const { login, signup, loginWithGoogle } = useAuth();
 
+    // List of allowed email domains to prevent temporary/disposable emails
+    const allowedDomains = [
+        'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 
+        'aol.com', 'protonmail.com', 'zoho.com', 'yandex.com', 'mail.com', 'gmx.com',
+        'live.com', 'msn.com', 'me.com'
+    ];
+
+    const isValidEmailDomain = (email: string) => {
+        const domain = email.split('@')[1]?.toLowerCase();
+        if (!domain) return false;
+        // Allow popular domains or educational addresses
+        return allowedDomains.includes(domain) || domain.endsWith('.edu') || domain.endsWith('.ac.uk');
+    };
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError('');
         setLoading(true);
+
+        // Validate email domain for new accounts (Signup)
+        // We only enforce this on signup to allow existing users with other domains to still login
+        if (!isLogin && !isValidEmailDomain(email)) {
+            setError('Please use a valid email provider (Gmail, Outlook, Yahoo, etc.) or an .edu address. Temporary email addresses are not allowed.');
+            setLoading(false);
+            return;
+        }
 
         try {
             if (isLogin) {
